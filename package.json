@@ -9,7 +9,7 @@
     "restart": "pm2 restart SUBZERO-MD"
   },
   "dependencies": {
-   "@whiskeysockets/baileys": "github:mrfr8nk/subzero-baileys",
+   "@whiskeysockets/baileys": "npm:baileys-pro@latest",
     "axios": "^1.7.9",
     "@adiwajshing/keyed-db": "latest",
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
@@ -40,6 +40,7 @@
     "node-cache": "^5.1.1",
     "node-fetch": "^2.6.1",
     "node-webpmux": "^3.1.0",
+    "@octokit/rest": "latest",
     "path": "^0.12.7",
     "pdf-lib": "^1.17.1",
     "pdfkit": "^0.14.0",
