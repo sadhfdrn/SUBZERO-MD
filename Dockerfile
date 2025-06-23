@@ -28,6 +28,9 @@ RUN chmod -R 777 /home/node/SUBZERO-MD/
 # Install dependencies using yarn
 RUN yarn install --network-concurrency 1 --ignore-engines
 
+# Add the TikTok API dependency (only if not already in package.json)
+RUN yarn add "@tobyg74/tiktok-api-dl@^1.3.2"
+
 # Expose port
 EXPOSE 7860
 
