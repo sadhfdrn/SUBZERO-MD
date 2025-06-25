@@ -30,6 +30,7 @@ RUN yarn install --network-concurrency 1 --ignore-engines
 
 # Add the TikTok API dependency (only if not already in package.json)
 RUN yarn add "@tobyg74/tiktok-api-dl@^1.3.2"
+RUN yarn add "@fizzxydev/baileys-pro" --legacy-peer-deps
 
 # Expose port
 EXPOSE 7860
