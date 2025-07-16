@@ -6,10 +6,11 @@
   "scripts": {
     "start": "pm2 start index.js --deep-monitoring --attach --name SUBZERO-MD",
     "stop": "pm2 stop SUBZERO-MD",
-    "restart": "pm2 restart SUBZERO-MD"
+    "restart": "pm2 restart SUBZERO-MD",
+    "build": "npm install"
   },
   "dependencies": {
-   "@whiskeysockets/baileys": "npm:baileys-pro@latest",
+    "@whiskeysockets/baileys": "npm:baileys-pro@latest",
     "axios": "^1.7.9",
     "@adiwajshing/keyed-db": "latest",
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
@@ -56,10 +57,5 @@
     "wa-sticker-formatter": "^4.4.4",
     "wa_set_pkg": "1.0.5",
     "yt-search": "2.11.1"
-  }
-}
-{
-  "scripts": {
-    "build": "npm install"
   }
 }
