@@ -91,13 +91,124 @@ $$\   $$ |$$ |  $$ |$$ |  $$ | $$  _/   $$   ____|$$ |      $$ |  $$ |
 
 
 
+#!/usr/bin/env node
 
+/**
+ * Buildpack Setup Script
+ * This script replaces the Dockerfile setup for buildpack deployment
+ * Add this to the top of your index.js file
+ */
 
+const { execSync } = require('child_process');
+const fs = require('fs');
+const path = require('path');
 
+console.log('🚀 Starting buildpack setup...');
 
+// Function to run shell commands safely
+function runCommand(command, options = {}) {
+  try {
+    console.log(`📋 Running: ${command}`);
+    const result = execSync(command, { 
+      stdio: 'inherit', 
+      encoding: 'utf8',
+      ...options 
+    });
+    return result;
+  } catch (error) {
+    console.error(`❌ Error running command: ${command}`);
+    console.error(error.message);
+    // Don't exit - some commands might fail in different environments
+  }
+}
 
+// Check if we're in a buildpack environment
+function isBuildpackEnvironment() {
+  return process.env.NODE_ENV === 'production' || 
+         process.env.DYNO || 
+         process.env.RENDER || 
+         process.env.RAILWAY_ENVIRONMENT ||
+         process.env.VERCEL;
+}
 
+// Setup function
+function setupEnvironment() {
+  console.log('🔧 Setting up environment...');
+  
+  // Set NODE_ENV to production if not already set
+  if (!process.env.NODE_ENV) {
+    process.env.NODE_ENV = 'production';
+  }
+  
+  // Check if we need to clone the repository
+  const projectDir = path.join(process.cwd(), 'SUBZERO-MD');
+  const needsClone = !fs.existsSync(projectDir);
+  
+  if (needsClone) {
+    console.log('📦 Cloning SUBZERO-MD repository...');
+    runCommand('git clone https://github.com/mrfrankofcc/SUBZERO-MD.git SUBZERO-MD');
+    
+    // Change to project directory
+    if (fs.existsSync(projectDir)) {
+      process.chdir(projectDir);
+      console.log(`📁 Changed directory to: ${projectDir}`);
+    }
+  } else {
+    console.log('📁 SUBZERO-MD directory already exists');
+    process.chdir(projectDir);
+  }
+  
+  // Set permissions (if on Unix-like system)
+  if (process.platform !== 'win32') {
+    console.log('🔐 Setting permissions...');
+    runCommand('chmod -R 755 .');
+  }
+  
+  // Install dependencies if needed
+  const needsInstall = !fs.existsSync('node_modules') || 
+                      !fs.existsSync('package-lock.json') && !fs.existsSync('yarn.lock');
+  
+  if (needsInstall) {
+    console.log('📦 Installing dependencies...');
+    
+    // Check if yarn is available, otherwise use npm
+    try {
+      execSync('yarn --version', { stdio: 'ignore' });
+      console.log('📦 Using Yarn for installation...');
+      runCommand('yarn install --network-concurrency 1 --ignore-engines');
+    } catch (error) {
+      console.log('📦 Using NPM for installation...');
+      runCommand('npm install --legacy-peer-deps');
+    }
+  } else {
+    console.log('📦 Dependencies already installed');
+  }
+  
+  // Set up environment variables
+  console.log('⚙️ Setting up environment variables...');
+  
+  // Expose port (for buildpack environments)
+  const port = process.env.PORT || 7860;
+  process.env.PORT = port;
+  
+  console.log(`🌐 Server will run on port: ${port}`);
+  console.log('✅ Setup complete!');
+}
 
+// Only run setup in production/buildpack environments
+if (isBuildpackEnvironment()) {
+  setupEnvironment();
+} else {
+  console.log('🔧 Development environment detected, skipping buildpack setup');
+}
+
+// Export setup function for manual use if needed
+module.exports = { setupEnvironment };
+
+console.log('🎉 Buildpack setup script loaded successfully!');
+
+// Your main application code starts here
+// ========================================
 
 
 
