@@ -58,3 +58,8 @@
     "yt-search": "2.11.1"
   }
 }
+{
+  "scripts": {
+    "build": "npm install"
+  }
+}
